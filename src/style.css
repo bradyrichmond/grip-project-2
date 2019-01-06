@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#root {
+    height: 100%;
+    width: 100%;
+    background: url(./images/ThaiDinnerBg.jpg);
+    background-size: cover;
+}
+
+.mainContainer {
+    padding: 1rem 3rem;
+}
+
+.contactContainer {
+    display: flex;
+    font-weight: bold;
+    position: absolute;
+    width: calc(100% - 6rem)
+}
+
+.addressContainer {
+    flex: 1;
+}
+
+.addressContainer:hover {
+    cursor: pointer;
+}
+
+a:link, a:visited, a:focus, a:hover, a:active {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+.mapContainer {
+    max-height: 0rem;
+    overflow: hidden;
+}
+
+.mapContainer.open {
+    max-height: 30rem;
+}
+
+p {
+    margin: 0;
+}
+
+.navContainer {
+    margin-top: 2rem;
+    text-align: center;
+}
