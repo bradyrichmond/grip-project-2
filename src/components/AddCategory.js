@@ -11,10 +11,6 @@ class AddCategory extends Component {
     }
   }
 
-  componentDidMount() {
-    this.getCategories();
-  }
-
   updateCategoryText = (e) => {
       this.setState({
           categoryText: e.target.value
@@ -26,7 +22,6 @@ class AddCategory extends Component {
       axios.post('/api/categories', {text: cleanedCategoryText})
       .then((resp) => {
           console.log('post success', resp);
-          this.getCategories();
         })
       .catch((rej) => {console.log('post error', rej)});
   }
