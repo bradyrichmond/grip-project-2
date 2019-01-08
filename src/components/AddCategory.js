@@ -6,8 +6,7 @@ class AddCategory extends Component {
     super(props);
 
     this.state = {
-        categoryText: '',
-        categories: []
+        categoryText: ''
     }
   }
 
@@ -20,10 +19,14 @@ class AddCategory extends Component {
   createCategory = () => {
       var cleanedCategoryText = this.state.categoryText.toLowerCase();
       axios.post('/api/categories', {text: cleanedCategoryText})
-      .then((resp) => {
-          console.log('post success', resp);
+      .then(
+        (resp) => {
+            console.log('post success', resp);
         })
-      .catch((rej) => {console.log('post error', rej)});
+      .catch(
+        (rej) => {
+            console.log('post error', rej);
+        });
   }
 
   render() {

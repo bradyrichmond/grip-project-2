@@ -64,6 +64,36 @@ router.route('/categories')
             res.json({ message: 'Category successfully added!' });
         });
     })
+  
+  //adding the /categories route to our /api router
+router.route('/menuitems')
+  //retrieve all categories from the database
+  .get(function (req, res) {
+      //looks at our MenuItem Schema
+      MenuItem.find(function (err, menuItems) {
+          if (err)
+              res.send(err);
+          //responds with a json object of our database categories.
+          res.json(menuItems)
+      });
+  })
+  //post new menuitem to the database
+  .post(function (req, res) {
+      var menuItem = new MenuItem();
+      //body parser lets us use the req.body
+      menuItem.title = req.body.title;
+      menuItem.description = req.body.description;
+      menuItem.price = req.body.price;
+      menuItem.category = req.body.category;
+      menuItem.spiceLevel = req.body.spiceLevel;
+      menuItem.bottle = req.body.bottle;
+      menuItem.addOn = req.body.addOn;
+      menuItem.save(function (err) {
+          if (err)
+              res.send(err);
+          res.json({ message: 'MenuItem successfully added!' });
+      });
+  })
 
 // router.route('/tweets/:tweet_id')
 //     .delete(function (req, res) {

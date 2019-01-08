@@ -12,7 +12,8 @@ var MenuItemsSchema = new Schema({
     price: String,
     spiceLevel: Number,
     bottle: Boolean,
-    addOn: Boolean
+    addOn: Boolean,
+    category: String
 });
 
 //export our module to use in server.js
