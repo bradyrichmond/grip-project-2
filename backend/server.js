@@ -6,6 +6,10 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var Category = require('./model/categories');
 var MenuItem = require('./model/menuItems');
+var Token = require('./model/tokens');
+var crypto = require('crypto');
+const {OAuth2Client} = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 require('dotenv').config();
 
 //and create our instances
@@ -36,10 +40,70 @@ app.use(function (req, res, next) {
     next();
 });
 
+async function verify(token) {
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const userid = payload['sub'];
+    return payload;
+}
+
+const generate_key = () => {
+    var sha = crypto.createHash('sha256');
+    sha.update(Math.random().toString());
+    var token = sha.digest('hex');
+    if (!tokenExists()) {
+        return token;
+    } else {
+        return generate_key();
+    }
+};
+
+const createToken = (jwt) => {
+    return new Promise((res, rej) => {
+        Token.findOne(jwt, (err, result) => {
+            if (!result) {
+                var newToken = new Token(jwt);
+                newToken.save((err) => {
+                    if (err) {
+                        rej('Error adding token to mongodb');
+                    }
+                    res();
+                });
+            } else {
+                console.log(`Token already exists for ${jwt.name}`);
+                res();
+            }
+        });
+    });
+}
+
 //now we can set the route path & initialize the API
 router.get('/', function(req, res) {
  res.json({ message: 'API Initialized!' });
 });
+
+//adding the /tokensignin route to our /api router
+router.route('/tokensignin')
+    //post new category to the database
+    .post(function (req, res) {
+        verify(req.body.tokenId)
+        .then((jwt) => {
+            console.log(JSON.stringify(jwt));
+            createToken(jwt)
+            .then(() => {
+                res.send(req.body.accessToken);
+            })
+            .catch((response) => {
+                res.send(response);
+            });
+        })
+        .catch(() => {
+            res.send(`Verify fail: ${JSON.stringify(req.body)}`);
+        });
+    })
 
 //adding the /categories route to our /api router
 router.route('/categories')

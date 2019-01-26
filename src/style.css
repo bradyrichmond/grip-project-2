@@ -5,14 +5,14 @@ html, body {
     padding: 0;
     height: 100%;
     width: 100%;
-    color: #ffffff;
+    color: #000000;
     font-family: 'Montserrat', sans-serif;
 }
 
 #root {
     height: 100%;
     width: 100%;
-    background: url(./images/ThaiDinnerBg.jpg);
+    background: url(./images/wood.jpg);
     background-size: cover;
 }
 
@@ -36,7 +36,7 @@ html, body {
 }
 
 a:link, a:visited, a:focus, a:hover, a:active {
-    color: #ffffff;
+    color: #000000;
     text-decoration: none;
 }
 
@@ -60,4 +60,15 @@ p {
 .navContainer {
     margin-top: 2rem;
     text-align: center;
+}
+
+.ordernow-button {
+    padding: 2rem 4rem;
+    font-size: 2rem;
+    border: 3px solid #000;
+}
+
+.ordernow-container {
+    display: flex;
+    justify-content: center;
 }

@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "crypto": "^1.0.1",
     "express": "^4.16.4",
+    "google-auth-library": "^2.0.2",
     "mongoose": "^5.4.2",
     "morgan": "^1.9.1"
   }
