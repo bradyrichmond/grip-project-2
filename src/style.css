@@ -95,7 +95,6 @@ p {
 
 .cart-container {
     flex: 2;
-    padding: 1rem;
     overflow-x: hidden;
 }
 
@@ -131,7 +130,7 @@ p {
 }
 
 .cart-item {
-    padding: 1rem 0;
+    padding: 1rem;
     border-bottom: 1px solid #cccccc;
     display: flex;
     animation-name: addToCart;

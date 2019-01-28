@@ -33,10 +33,22 @@ class Menu extends Component {
 
   addToCart = () => {
     let newCart = this.state.cartItems;
-    newCart.push(<CartItem title="This is a cart Item" price="8.95" />);
+    newCart.push({title: "This is a cart Item", price:"8.95"});
     this.setState({
       cartItems: newCart
     });
+  }
+
+  subTotalReducer = (total, next) => {
+    return total + next;
+  }
+
+  calculateSubTotal = () => {
+    let priceList = this.state.cartItems.map((cartItem) => {
+      return parseFloat(cartItem.price);
+    });
+    console.log(priceList);
+    return priceList.reduce(this.subTotalReducer).toFixed(2);
   }
 
   render() {
@@ -57,13 +69,17 @@ class Menu extends Component {
           }
         </div>
         <div className="cart-container">
-          CART
           {
             this.state.cartItems.length > 0 &&
             <div className="cart-items-container">
-              {this.state.cartItems}
+              {this.state.cartItems.map((cartItem) => {
+                return (<CartItem title={cartItem.title} price={cartItem.price} />)
+              })}
             </div>
           }
+          <div className="total">
+            Sub-Total: ${this.state.cartItems.length > 0 ? this.calculateSubTotal() : 0.00}
+          </div>
         </div>
       </div>
     );
