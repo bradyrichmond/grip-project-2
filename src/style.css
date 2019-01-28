@@ -17,14 +17,22 @@ html, body {
 }
 
 .mainContainer {
-    padding: 1rem 3rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.contentContainer {
+    flex: 1;
 }
 
 .contactContainer {
     display: flex;
     font-weight: bold;
-    position: absolute;
-    width: calc(100% - 6rem)
+    width: calc(100% - 6rem);
+    padding: 1rem 3rem;
+    background: #ffffff;
+    box-shadow: 0px 0px 5px 1px #636363;
 }
 
 .addressContainer {
@@ -72,3 +80,65 @@ p {
     display: flex;
     justify-content: center;
 }
+
+.menu-view-container {
+    display: flex;
+    flex-direction: row;
+    padding: 1rem 3rem;
+}
+
+.menu-container {
+    flex: 3;
+    margin-right: 1rem;
+    padding: 1rem;
+}
+
+.cart-container {
+    flex: 2;
+    padding: 1rem;
+    overflow-x: hidden;
+}
+
+.menu-container, .cart-container {
+    background: #ffffff;
+    box-shadow: 0px 0px 5px 1px #636363;
+}
+
+.menu-category-button-container {
+    display: flex;
+}
+
+.menu-category-button {
+    border: 3px solid #000;
+    padding: 1rem;
+    text-transform: uppercase;
+    margin-right: 1rem;
+    flex: 1;
+    text-align: center;
+}
+
+.menu-category-button:last-of-type {
+    margin: 0;
+}
+
+@keyframes addToCart {
+    from {
+        transform: translate(100%,0);
+    }
+    to {
+        transform: translate(0,0);
+    }
+}
+
+.cart-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid #cccccc;
+    display: flex;
+    animation-name: addToCart;
+    animation-duration: 1s;
+}
+
+.cart-item .price {
+    flex: 1;
+    text-align: right;
+ }
