@@ -8,8 +8,11 @@ class Menu extends Component {
     this.state = {
       categories: [],
       menuItems: [],
-      cartItems: []
+      cartItems: [],
+      cartIsOverflowing: false
     }
+
+    this.scrollCart = React.createRef();
   }
 
   componentDidMount() {
@@ -34,8 +37,10 @@ class Menu extends Component {
   addToCart = () => {
     let newCart = this.state.cartItems;
     newCart.push({title: "This is a cart Item", price:"8.95"});
+    let cartIsOverflowing = this.checkCartOverflow();
     this.setState({
-      cartItems: newCart
+      cartItems: newCart,
+      cartIsOverflowing
     });
   }
 
@@ -47,8 +52,11 @@ class Menu extends Component {
     let priceList = this.state.cartItems.map((cartItem) => {
       return parseFloat(cartItem.price);
     });
-    console.log(priceList);
     return priceList.reduce(this.subTotalReducer).toFixed(2);
+  }
+
+  checkCartOverflow = () => {
+    return this.scrollCart.current.scrollHeight > this.scrollCart.current.clientHeight;
   }
 
   render() {
@@ -69,15 +77,23 @@ class Menu extends Component {
           }
         </div>
         <div className="cart-container">
-          {
-            this.state.cartItems.length > 0 &&
-            <div className="cart-items-container">
-              {this.state.cartItems.map((cartItem) => {
-                return (<CartItem title={cartItem.title} price={cartItem.price} />)
-              })}
+          <div className="cart-items-container-outer">
+            <div className="cart-items-container-inner" ref={this.scrollCart}>
+              {
+              this.state.cartItems.length > 0 &&
+                <div className="cart-items">
+                  {this.state.cartItems.map((cartItem) => {
+                    return (<CartItem title={cartItem.title} price={cartItem.price} />)
+                  })}
+                </div>
+              }
             </div>
+          </div>
+          {
+            this.state.cartIsOverflowing &&
+            <div className="more-items">Scroll for more Items</div>
           }
-          <div className="total">
+          <div className="sub-total">
             Sub-Total: ${this.state.cartItems.length > 0 ? this.calculateSubTotal() : 0.00}
           </div>
         </div>

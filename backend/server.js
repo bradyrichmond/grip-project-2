@@ -46,23 +46,17 @@ async function verify(token) {
         audience: process.env.GOOGLE_CLIENT_ID,
     });
     const payload = ticket.getPayload();
-    const userid = payload['sub'];
     return payload;
 }
 
-const generate_key = () => {
-    var sha = crypto.createHash('sha256');
-    sha.update(Math.random().toString());
-    var token = sha.digest('hex');
-    if (!tokenExists()) {
-        return token;
-    } else {
-        return generate_key();
-    }
-};
-
 const createToken = (jwt) => {
     return new Promise((res, rej) => {
+        if (!process.env.APP_ADMINS.includes(jwt.email)) {
+            console.log('User not an admin');
+            rej('User not an admin');
+            return;
+        }
+        console.log('User is an admin');
         Token.findOne(jwt, (err, result) => {
             if (!result) {
                 var newToken = new Token(jwt);
@@ -91,7 +85,6 @@ router.route('/tokensignin')
     .post(function (req, res) {
         verify(req.body.tokenId)
         .then((jwt) => {
-            console.log(JSON.stringify(jwt));
             createToken(jwt)
             .then(() => {
                 res.send(req.body.accessToken);
