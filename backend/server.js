@@ -51,12 +51,6 @@ async function verify(token) {
 
 const createToken = (jwt) => {
     return new Promise((res, rej) => {
-        if (!process.env.APP_ADMINS.includes(jwt.email)) {
-            console.log('User not an admin');
-            rej('User not an admin');
-            return;
-        }
-        console.log('User is an admin');
         Token.findOne(jwt, (err, result) => {
             if (!result) {
                 var newToken = new Token(jwt);
@@ -74,6 +68,15 @@ const createToken = (jwt) => {
     });
 }
 
+const isUserAdmin = (email) => {
+    if (process.env.APP_ADMINS.includes(email)) {
+        console.log('User is an admin');
+        return true;
+    }
+    console.log('User is not an admin');
+    return false;
+}
+
 //now we can set the route path & initialize the API
 router.get('/', function(req, res) {
  res.json({ message: 'API Initialized!' });
@@ -81,19 +84,20 @@ router.get('/', function(req, res) {
 
 //adding the /tokensignin route to our /api router
 router.route('/tokensignin')
-    //post new category to the database
     .post(function (req, res) {
         verify(req.body.tokenId)
         .then((jwt) => {
             createToken(jwt)
             .then(() => {
-                res.send(req.body.accessToken);
+                const isAdmin = isUserAdmin(jwt.email);
+                res.send({accessToken: req.body.accessToken, isAdmin});
             })
             .catch((response) => {
                 res.send(response);
             });
         })
-        .catch(() => {
+        .catch((error) => {
+            console.log(error);
             res.send(`Verify fail: ${JSON.stringify(req.body)}`);
         });
     })
@@ -152,15 +156,15 @@ router.route('/menuitems')
       });
   })
 
-// router.route('/tweets/:tweet_id')
-//     .delete(function (req, res) {
-//         //selects the tweet by its ID, then removes it.
-//         Tweet.remove({ _id: req.params.tweet_id }, function (err, tweet) {
-//             if (err)
-//                 res.send(err);
-//             res.json({ message: 'Tweet has been deleted' })
-//         })
-//     });
+router.route('/menuitem/:_id')
+    .delete(function (req, res) {
+        //selects the tweet by its ID, then removes it.
+        menuItem.remove({ _id: req.params._id }, function (err) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'menuItem has been deleted' })
+        })
+    });
 
 //Use our router configuration when we call /api
 app.use('/api', router);

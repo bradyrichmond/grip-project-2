@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import { GoogleLogin, GoogleLogout } from 'react-google-login';
-import Cookies from 'universal-cookie';
-
-import AddMenuItem from './components/AddMenuItem';
-import AddCategory from './components/AddCategory';
-import axios from 'axios';
-const cookies = new Cookies();
+import { GoogleLogin } from 'react-google-login';
+import {login, loginError} from './actions';
+import { connect } from 'react-redux';
 
 class Login extends Component {
   constructor(props) { 
@@ -14,22 +10,18 @@ class Login extends Component {
 
   successfulLogin = (response) => {
     console.log(`Success: ${JSON.stringify(response)}`);
-    axios.post('/api/tokensignin', response)
-    .then((res) => {
-      cookies.set('accessToken', res.data);
-    })
-    .catch((failure) => {
-      console.error('log in verification fail', failure);
-    });
+    this.props.dispatch(login(response));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.loggedIn != nextProps.loggedIn) {
+      this.props.history.push('/menu');
+    }
   }
 
   errorLogin = (response) => {
     console.log(`Error: ${JSON.stringify(response)}`);
-  }
-
-  logoutSuccess = (response) => {
-    console.log(`Log out success: ${response}`);
-    cookies.remove('accessToken');
+    this.props.dispatch(loginError());
   }
 
   render() {
@@ -42,10 +34,18 @@ class Login extends Component {
                 onSuccess={this.successfulLogin}
                 onFailure={this.errorLogin}
             />
+            {this.props.loginError && <p className='error-message'>Login Failure</p>}
         </div>
       </div>
     );
   }
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+  return {
+    error: state.grip.loginError,
+    loggedIn: state.grip.loggedIn
+  }
+}
+
+export default connect(mapStateToProps)(Login);

@@ -170,3 +170,7 @@ p {
     flex: 1;
     position: relative;
 }
+
+.error-message {
+    color: red;
+}

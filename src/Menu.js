@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
 
 class Menu extends Component {
   constructor(props) { 
@@ -8,6 +9,8 @@ class Menu extends Component {
     this.state = {
       categories: [],
       menuItems: [],
+      filteredMenuItems: [],
+      selectedFilter: 'appetizers',
       cartItems: [],
       cartIsOverflowing: false
     }
@@ -31,7 +34,8 @@ class Menu extends Component {
       this.setState({
         menuItems: response.data
       });
-    })
+      this.filterItems();
+    });
   }
 
   addToCart = () => {
@@ -40,7 +44,7 @@ class Menu extends Component {
     let cartIsOverflowing = this.checkCartOverflow();
     this.setState({
       cartItems: newCart,
-      cartIsOverflowing
+      cartIsOverflowing,
     });
   }
 
@@ -59,6 +63,22 @@ class Menu extends Component {
     return this.scrollCart.current.scrollHeight > this.scrollCart.current.clientHeight;
   }
 
+  filterItems = (e) => {
+    let filterString = e ? e.target.title : this.state.selectedFilter;
+    let filteredMenuItems = this.state.menuItems.filter((menuItem) => {
+      if (menuItem.category) {
+        console.log(menuItem.category, filterString)
+        return menuItem.category.toLowerCase() === 'appetizer';
+      } else {
+        return false;
+      }
+    });
+    this.setState({
+      filteredMenuItems: this.state.menuItems,
+      selectedFilter: filterString
+    })
+  }
+
   render() {
     return (
       <div className="menu-view-container">
@@ -70,11 +90,19 @@ class Menu extends Component {
             </div>
           }
           {
-            this.state.menuItems.length > 0 &&
-            this.state.menuItems.map((menuItem) => 
+            this.state.filteredMenuItems.length > 0 &&
+            this.state.filteredMenuItems.map((menuItem) => 
               <MenuItem title={menuItem.title} key={menuItem._id} />
             )
           }
+          {
+            this.state.filteredMenuItems.length < 1 &&
+            <p>No Menu Items</p>
+          }
+          {this.props.loggedIn && <p>User is logged in.</p>}
+          {!this.props.loggedIn && <p>User is not logged in.</p>}
+          {this.props.isAdmin && <p>User is admin.</p>}
+          {!this.props.isAdmin && <p>User is not admin.</p>}
         </div>
         <div className="cart-container">
           <div className="cart-items-container-outer">
@@ -83,7 +111,8 @@ class Menu extends Component {
               this.state.cartItems.length > 0 &&
                 <div className="cart-items">
                   {this.state.cartItems.map((cartItem) => {
-                    return (<CartItem title={cartItem.title} price={cartItem.price} />)
+                    let title = cartItem.title || 'NoTitle';
+                    return (<CartItem title={title} price={cartItem.price} />)
                   })}
                 </div>
               }
@@ -113,8 +142,15 @@ const CartItem = (props) => {
 const MenuItem = (props) => {
   return (
     <div className="menu-item">
-      {props.title}
+      Item: {props.title}
     </div>);
 }
 
-export default Menu;
+const mapStateToProps = (state) => {
+  return {
+    loggedIn: state.grip.loggedIn,
+    isAdmin: state.grip.isAdmin
+  }
+}
+
+export default connect(mapStateToProps)(Menu);

@@ -106,12 +106,3 @@ class AddMenuItem extends Component {
 }
 
 export default AddMenuItem;
-
-// var MenuItemsSchema = new Schema({
-//     title: String,
-//     description: String,
-//     price: String,
-//     spiceLevel: Number,
-//     bottle: Boolean,
-//     addOn: Boolean
-// });
