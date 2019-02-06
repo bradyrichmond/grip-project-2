@@ -159,7 +159,7 @@ router.route('/menuitems')
 router.route('/menuitem/:_id')
     .delete(function (req, res) {
         //selects the tweet by its ID, then removes it.
-        menuItem.remove({ _id: req.params._id }, function (err) {
+        MenuItem.remove({ _id: req.params._id }, function (err) {
             if (err)
                 res.send(err);
             res.json({ message: 'menuItem has been deleted' })

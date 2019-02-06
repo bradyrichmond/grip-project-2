@@ -14,7 +14,7 @@ class Login extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.loggedIn != nextProps.loggedIn) {
+    if (this.props.loggedIn !== nextProps.loggedIn) {
       this.props.history.push('/menu');
     }
   }

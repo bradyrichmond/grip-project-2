@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { fetchMenuItems, deleteMenuItem } from './actions';
 
 class Menu extends Component {
   constructor(props) { 
@@ -8,7 +9,6 @@ class Menu extends Component {
 
     this.state = {
       categories: [],
-      menuItems: [],
       filteredMenuItems: [],
       selectedFilter: 'appetizers',
       cartItems: [],
@@ -27,16 +27,17 @@ class Menu extends Component {
           };
       });
       categories = categories.filter(category => !!category.text)
+      
       this.setState({categories});
-    });
-
-    axios.get('/api/menuitems').then((response) => {
-      this.setState({
-        menuItems: response.data
-      });
-      this.filterItems();
+      this.props.dispatch(fetchMenuItems());
     });
   }
+
+  componentDidUpdate(prevProps){
+    if(prevProps.menuItems !== this.props.menuItems){ 
+      this.filterItems();
+    }
+ }
 
   addToCart = () => {
     let newCart = this.state.cartItems;
@@ -59,22 +60,27 @@ class Menu extends Component {
     return priceList.reduce(this.subTotalReducer).toFixed(2);
   }
 
+  deleteItem = (id) => {
+    this.props.dispatch(deleteMenuItem(id));
+  }
+
   checkCartOverflow = () => {
     return this.scrollCart.current.scrollHeight > this.scrollCart.current.clientHeight;
   }
 
   filterItems = (e) => {
     let filterString = e ? e.target.title : this.state.selectedFilter;
-    let filteredMenuItems = this.state.menuItems.filter((menuItem) => {
+    let filteredMenuItems = this.props.menuItems ? this.props.menuItems.filter((menuItem) => {
       if (menuItem.category) {
         console.log(menuItem.category, filterString)
         return menuItem.category.toLowerCase() === 'appetizer';
       } else {
         return false;
       }
-    });
+    }) : [];
+
     this.setState({
-      filteredMenuItems: this.state.menuItems,
+      filteredMenuItems: this.props.menuItems,
       selectedFilter: filterString
     })
   }
@@ -92,7 +98,9 @@ class Menu extends Component {
           {
             this.state.filteredMenuItems.length > 0 &&
             this.state.filteredMenuItems.map((menuItem) => 
-              <MenuItem title={menuItem.title} key={menuItem._id} />
+              <MenuItem title={menuItem.title} key={menuItem._id} userIsAdmin={this.props.isAdmin} delete={() => {
+                this.deleteItem(menuItem._id);
+              }}/>
             )
           }
           {
@@ -143,13 +151,15 @@ const MenuItem = (props) => {
   return (
     <div className="menu-item">
       Item: {props.title}
+      {props.isAdmin && <p onClick={props.delete}>delete item</p>}
     </div>);
 }
 
 const mapStateToProps = (state) => {
   return {
     loggedIn: state.grip.loggedIn,
-    isAdmin: state.grip.isAdmin
+    isAdmin: state.grip.isAdmin,
+    menuItems: state.grip.menuItems
   }
 }
 
