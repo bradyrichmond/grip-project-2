@@ -14,6 +14,13 @@ export const DELETE_MENU_ITEM_ERROR = 'DELETE_MENU_ITEM_ERROR';
 export const FETCH_MENU_ITEMS_REQUEST = 'FETCH_MENU_ITEMS_REQUEST';
 export const FETCH_MENU_ITEMS_SUCCESS = 'FETCH_MENU_ITEMS_SUCCESS';
 export const FETCH_MENU_ITEMS_ERROR = 'FETCH_MENU_ITEMS_ERROR';
+export const FETCH_CATEGORIES_REQUEST = 'FETCH_CATEGORIES_REQUEST';
+export const FETCH_CATEGORIES_SUCCESS = 'FETCH_CATEGORIES_SUCCESS';
+export const FETCH_CATEGORIES_ERROR = 'FETCH_CATEGORIES_ERROR';
+export const POST_MENU_ITEM_REQUEST = 'POST_MENU_ITEM_REQUEST';
+export const POST_MENU_ITEM_SUCCESS = 'POST_MENU_ITEM_SUCCESS';
+export const POST_MENU_ITEM_ERROR = 'POST_MENU_ITEM_ERROR';
+
 
 // POST
 export const login = (response) => dispatch => {
@@ -49,6 +56,37 @@ export const loginError = () => {
     return {
         type: LOGIN_ERROR,
         isLoggingIn: false
+    }
+}
+
+export const postMenuItem = (menuItem) => dispatch => {
+    dispatch(postMenuItemRequest());
+    axios.post('/api/menuitems', menuItem)
+    .then(() => {
+      dispatch(postMenuItemSuccess());
+      dispatch(fetchMenuItems());
+    })
+    .catch((failure) => {
+      console.error('post menu item error', failure);
+      dispatch(postMenuItemError());
+    });
+}
+
+export const postMenuItemRequest = () => {
+    return {
+        type: POST_MENU_ITEM_REQUEST
+    }
+}
+
+export const postMenuItemSuccess = () => {
+    return {
+        type: POST_MENU_ITEM_SUCCESS
+    }
+}
+
+export const postMenuItemError = () => {
+    return {
+        type: POST_MENU_ITEM_ERROR
     }
 }
 
@@ -113,6 +151,40 @@ export const fetchMenuItemError = () => {
     return {
         type: FETCH_MENU_ITEMS_ERROR,
         menuItemFetchError: true
+    }
+}
+
+export const fetchCategories = () => dispatch => {
+    dispatch(fetchCategoriesRequest());
+    axios.get('/api/categories')
+    .then((response) => {
+        dispatch(fetchCategoriesSuccess(response.data));
+    })
+    .catch((error) => {
+        dispatch(fetchCategoriesError(error));
+    });
+}
+
+export const fetchCategoriesRequest = () => {
+    return {
+        type: FETCH_CATEGORIES_REQUEST,
+        categoriesFetchError: false
+    }
+}
+
+export const fetchCategoriesSuccess = (categories) => {
+    categories = categories.filter(category => !!category.text)
+
+    return {
+        type: FETCH_CATEGORIES_SUCCESS,
+        categories
+    }
+}
+
+export const fetchCategoriesError = () => {
+    return {
+        type: FETCH_CATEGORIES_ERROR,
+        categoriesFetchError: true
     }
 }
 

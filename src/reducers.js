@@ -10,11 +10,17 @@ import {
     DELETE_MENU_ITEM_ERROR,
     FETCH_MENU_ITEMS_REQUEST,
     FETCH_MENU_ITEMS_SUCCESS,
-    FETCH_MENU_ITEMS_ERROR
+    FETCH_MENU_ITEMS_ERROR,
+    FETCH_CATEGORIES_REQUEST,
+    FETCH_CATEGORIES_SUCCESS,
+    FETCH_CATEGORIES_ERROR,
+    POST_MENU_ITEM_REQUEST,
+    POST_MENU_ITEM_SUCCESS,
+    POST_MENU_ITEM_ERROR
 } 
 from './actions';
 
-const grip = (state = {menuItems: []}, action) => {
+const grip = (state = {menuItems: [], categories: []}, action) => {
     switch (action.type) {
         case GRIP_PROJECT:
             return { ...state, isFetching: action.isFetching };
@@ -34,6 +40,16 @@ const grip = (state = {menuItems: []}, action) => {
             return { ...state, menuItems: action.menuItems};
         case FETCH_MENU_ITEMS_ERROR:
             return { ...state, menuItemFetchError: action.menuItemFetchError};
+        case FETCH_CATEGORIES_REQUEST:
+            return { ...state};
+        case FETCH_CATEGORIES_SUCCESS:
+            return { ...state, categories: action.categories};
+        case FETCH_CATEGORIES_ERROR:
+            return { ...state, categoriesFetchError: action.categoriesFetchError};
+        case POST_MENU_ITEM_REQUEST:
+        case POST_MENU_ITEM_SUCCESS:
+        case POST_MENU_ITEM_ERROR:
+            return { ...state};
         default:
             return state;
     };

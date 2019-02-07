@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { fetchMenuItems, deleteMenuItem } from './actions';
+import { fetchMenuItems, fetchCategories, deleteMenuItem } from './actions';
+import AddMenuItem from './components/AddMenuItem';
 
 class Menu extends Component {
   constructor(props) { 
     super(props);
 
     this.state = {
-      categories: [],
       filteredMenuItems: [],
       selectedFilter: 'appetizers',
       cartItems: [],
@@ -19,18 +19,8 @@ class Menu extends Component {
   }
 
   componentDidMount() {
-    axios.get('/api/categories').then((response) => {
-      let categories = response.data.map(category => {
-          return {
-            text: category.text,
-            id: category._id
-          };
-      });
-      categories = categories.filter(category => !!category.text)
-      
-      this.setState({categories});
-      this.props.dispatch(fetchMenuItems());
-    });
+    this.props.dispatch(fetchCategories());
+    this.props.dispatch(fetchMenuItems());
   }
 
   componentDidUpdate(prevProps){
@@ -90,9 +80,9 @@ class Menu extends Component {
       <div className="menu-view-container">
         <div className="menu-container">
           {
-            this.state.categories.length > 0 &&
+            this.props.categories.length > 0 &&
             <div className="menu-category-button-container">
-              {this.state.categories.map(category => <p key={category.id} className="menu-category-button" onClick={this.addToCart}>{category.text}</p>)}
+              {this.props.categories.map(category => <p key={category.id} className="menu-category-button" onClick={this.addToCart}>{category.text}</p>)}
             </div>
           }
           {
@@ -107,10 +97,8 @@ class Menu extends Component {
             this.state.filteredMenuItems.length < 1 &&
             <p>No Menu Items</p>
           }
-          {this.props.loggedIn && <p>User is logged in.</p>}
-          {!this.props.loggedIn && <p>User is not logged in.</p>}
-          {this.props.isAdmin && <p>User is admin.</p>}
-          {!this.props.isAdmin && <p>User is not admin.</p>}
+          {this.props.isAdmin && <AddMenuItem />}
+
         </div>
         <div className="cart-container">
           <div className="cart-items-container-outer">
@@ -151,7 +139,7 @@ const MenuItem = (props) => {
   return (
     <div className="menu-item">
       Item: {props.title}
-      {props.isAdmin && <p onClick={props.delete}>delete item</p>}
+      {props.userIsAdmin && <span onClick={props.delete} className="delete-menu-item">x</span>}
     </div>);
 }
 
@@ -159,7 +147,8 @@ const mapStateToProps = (state) => {
   return {
     loggedIn: state.grip.loggedIn,
     isAdmin: state.grip.isAdmin,
-    menuItems: state.grip.menuItems
+    menuItems: state.grip.menuItems,
+    categories: state.grip.categories
   }
 }
 
