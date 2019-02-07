@@ -175,8 +175,8 @@ p {
 }
 
 .menu-item {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .menu-item-top {
@@ -186,12 +186,14 @@ p {
 .menu-item-title {
     flex: 1;
     font-weight: bold;
+    font-size: 1.5rem;
 }
 
 .menu-item-bottom {
-    padding-top: .5rem;
     font-weight: 100;
     display: flex;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
 }
 
 .menu-item-description {
@@ -199,8 +201,9 @@ p {
     flex-direction: column;
     justify-content: center;
     flex: 1;
+    font-size: 1rem;
 }
 
 .menu-item-add-to-cart {
-    padding: none;
+    
 }

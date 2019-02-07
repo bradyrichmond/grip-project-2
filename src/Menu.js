@@ -7,6 +7,8 @@ import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 
 class Menu extends Component {
   constructor(props) { 
@@ -62,21 +64,20 @@ class Menu extends Component {
     return this.scrollCart.current.scrollHeight > this.scrollCart.current.clientHeight;
   }
 
-  filterItems = (e) => {
-    let filterString = e ? e.target.title : this.state.selectedFilter;
-    let filteredMenuItems = this.props.menuItems ? this.props.menuItems.filter((menuItem) => {
+  filterItems = (category="appetizers") => {
+    let filteredMenuItems = this.props.menuItems.filter((menuItem) => {
+      console.log(menuItem.category);
       if (menuItem.category) {
-        console.log(menuItem.category, filterString)
-        return menuItem.category.toLowerCase() === 'appetizer';
+        return menuItem.category.toLowerCase() === category.toLowerCase();
       } else {
         return false;
       }
-    }) : [];
+    });
 
     this.setState({
-      filteredMenuItems: this.props.menuItems,
-      selectedFilter: filterString
-    })
+      filteredMenuItems,
+      selectedFilter: category
+    });
   }
 
   render() {
@@ -86,7 +87,17 @@ class Menu extends Component {
           {
             this.props.categories.length > 0 &&
             <div className="menu-category-button-container">
-              {this.props.categories.map(category => <p key={category.id} className="menu-category-button" onClick={this.addToCart}>{category.text}</p>)}
+              {this.props.categories.map(category => 
+                {
+                  return (
+                    <Button key={category.id}  variant="outlined" onClick={() => {
+                      this.filterItems(category.text)
+                      }}>
+                      {category.text}
+                    </Button>
+                  )
+                }
+              )}
             </div>
           }
           {
@@ -148,15 +159,14 @@ const MenuItem = (props) => {
       </div>
       <div className="menu-item-bottom">
         <p className="menu-item-description">{props.description}</p>
-        <IconButton color="primary" aria-label="Add to shopping cart" className="menu-item-add-to-cart">
-          <AddShoppingCartIcon />
-        </IconButton>
+        <AddShoppingCartIcon />
+        {props.userIsAdmin &&
+          <React.Fragment>
+            <DeleteIcon onClick={props.delete}/>
+            <Icon>edit_icon</Icon>
+          </React.Fragment>
+        }
       </div>
-
-      {props.userIsAdmin && 
-      <Fab aria-label="Delete" size="small" onClick={props.delete}>
-        <DeleteIcon />
-      </Fab>}
     </div>);
 }
 
