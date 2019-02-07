@@ -30,7 +30,8 @@ class Menu extends Component {
   }
 
   componentDidUpdate(prevProps){
-    if(prevProps.menuItems !== this.props.menuItems){ 
+    if(prevProps.menuItems !== this.props.menuItems){
+      console.log(this.props.menuItems);
       this.filterItems();
     }
  }
@@ -103,9 +104,17 @@ class Menu extends Component {
           {
             this.state.filteredMenuItems.length > 0 &&
             this.state.filteredMenuItems.map((menuItem) => 
-              <MenuItem title={menuItem.title} description={menuItem.description} price={menuItem.price} key={menuItem._id} userIsAdmin={this.props.isAdmin} delete={() => {
-                this.deleteItem(menuItem._id);
-              }}/>
+              <MenuItem 
+                title={menuItem.title}
+                description={menuItem.description}
+                price={menuItem.price}
+                userIsAdmin={this.props.isAdmin}
+                toGo={menuItem.toGo}
+                key={menuItem._id} 
+                delete={() => {
+                  this.deleteItem(menuItem._id);
+                }}
+              />
             )
           }
           {
@@ -159,7 +168,9 @@ const MenuItem = (props) => {
       </div>
       <div className="menu-item-bottom">
         <p className="menu-item-description">{props.description}</p>
-        <AddShoppingCartIcon />
+        {props.toGo && 
+          <AddShoppingCartIcon />
+        }
         {props.userIsAdmin &&
           <React.Fragment>
             <DeleteIcon onClick={props.delete}/>

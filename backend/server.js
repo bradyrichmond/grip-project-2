@@ -149,6 +149,7 @@ router.route('/menuitems')
       menuItem.spiceLevel = req.body.spiceLevel;
       menuItem.bottle = req.body.bottle;
       menuItem.addOn = req.body.addOn;
+      menuItem.toGo = req.body.toGo;
       menuItem.save(function (err) {
           if (err)
               res.send(err);
