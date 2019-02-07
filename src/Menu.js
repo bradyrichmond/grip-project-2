@@ -3,6 +3,10 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import { fetchMenuItems, fetchCategories, deleteMenuItem } from './actions';
 import AddMenuItem from './components/AddMenuItem';
+import Fab from '@material-ui/core/Fab';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import IconButton from '@material-ui/core/IconButton';
 
 class Menu extends Component {
   constructor(props) { 
@@ -88,7 +92,7 @@ class Menu extends Component {
           {
             this.state.filteredMenuItems.length > 0 &&
             this.state.filteredMenuItems.map((menuItem) => 
-              <MenuItem title={menuItem.title} key={menuItem._id} userIsAdmin={this.props.isAdmin} delete={() => {
+              <MenuItem title={menuItem.title} description={menuItem.description} price={menuItem.price} key={menuItem._id} userIsAdmin={this.props.isAdmin} delete={() => {
                 this.deleteItem(menuItem._id);
               }}/>
             )
@@ -138,8 +142,21 @@ const CartItem = (props) => {
 const MenuItem = (props) => {
   return (
     <div className="menu-item">
-      Item: {props.title}
-      {props.userIsAdmin && <span onClick={props.delete} className="delete-menu-item">x</span>}
+      <div className="menu-item-top">
+        <p className="menu-item-title">{props.title}</p>
+        <p>${props.price}</p>
+      </div>
+      <div className="menu-item-bottom">
+        <p className="menu-item-description">{props.description}</p>
+        <IconButton color="primary" aria-label="Add to shopping cart" className="menu-item-add-to-cart">
+          <AddShoppingCartIcon />
+        </IconButton>
+      </div>
+
+      {props.userIsAdmin && 
+      <Fab aria-label="Delete" size="small" onClick={props.delete}>
+        <DeleteIcon />
+      </Fab>}
     </div>);
 }
 

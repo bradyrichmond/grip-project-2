@@ -174,12 +174,33 @@ p {
     color: red;
 }
 
-.delete-menu-item {
-    color: red;
-    padding-left: 1rem;
+.menu-item {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.menu-item-top {
+    display: flex;
+}
+
+.menu-item-title {
+    flex: 1;
     font-weight: bold;
 }
 
-.delete-menu-item:hover {
-    cursor: pointer;
+.menu-item-bottom {
+    padding-top: .5rem;
+    font-weight: 100;
+    display: flex;
+}
+
+.menu-item-description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+.menu-item-add-to-cart {
+    padding: none;
 }

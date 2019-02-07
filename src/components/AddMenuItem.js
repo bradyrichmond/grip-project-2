@@ -9,6 +9,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 
 import { postMenuItem } from '../actions';
 
@@ -23,7 +24,7 @@ class AddMenuItem extends Component {
             spiceLevel: 0,
             bottle: false,
             addOn: false,
-            toGo: false
+            toGo: true
         }
     }
 
