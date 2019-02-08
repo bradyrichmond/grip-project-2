@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
@@ -9,7 +8,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Button from '@material-ui/core/Button';
-import Fab from '@material-ui/core/Fab';
 
 import { postMenuItem } from '../actions';
 
@@ -48,6 +46,20 @@ class AddMenuItem extends Component {
         newMenuItem.toGo = this.state.toGo;
         
         this.props.dispatch(postMenuItem(newMenuItem));
+        this.resetState();
+    }
+
+    resetState = () => {
+        this.setState({
+            title: '',
+            description: '',
+            price: '',
+            category: 'appetizer',
+            spiceLevel: 0,
+            bottle: false,
+            addOn: false,
+            toGo: true
+        });
     }
 
     render() {

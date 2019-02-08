@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import { fetchMenuItems, fetchCategories, deleteMenuItem } from './actions';
 import AddMenuItem from './components/AddMenuItem';
-import Fab from '@material-ui/core/Fab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
-import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
+import AddIcon from '@material-ui/icons/Add';
 
 class Menu extends Component {
   constructor(props) { 
@@ -36,9 +34,19 @@ class Menu extends Component {
     }
  }
 
-  addToCart = () => {
+  addToCart = (menuItem) => {
     let newCart = this.state.cartItems;
-    newCart.push({title: "This is a cart Item", price:"8.95"});
+    newCart.push({title: menuItem.title, price: menuItem.price});
+    let cartIsOverflowing = this.checkCartOverflow();
+    this.setState({
+      cartItems: newCart,
+      cartIsOverflowing,
+    });
+  }
+
+  removeItemFromCart = (index) => {
+    let newCart = this.state.cartItems;
+    newCart.splice(index, 1);
     let cartIsOverflowing = this.checkCartOverflow();
     this.setState({
       cartItems: newCart,
@@ -67,7 +75,6 @@ class Menu extends Component {
 
   filterItems = (category="appetizers") => {
     let filteredMenuItems = this.props.menuItems.filter((menuItem) => {
-      console.log(menuItem.category);
       if (menuItem.category) {
         return menuItem.category.toLowerCase() === category.toLowerCase();
       } else {
@@ -99,6 +106,10 @@ class Menu extends Component {
                   )
                 }
               )}
+              {
+                this.props.isAdmin &&
+                <AddIcon />
+              }
             </div>
           }
           {
@@ -113,6 +124,9 @@ class Menu extends Component {
                 key={menuItem._id} 
                 delete={() => {
                   this.deleteItem(menuItem._id);
+                }}
+                addItemToCart = {() => {
+                  this.addToCart(menuItem);
                 }}
               />
             )
@@ -130,9 +144,11 @@ class Menu extends Component {
               {
               this.state.cartItems.length > 0 &&
                 <div className="cart-items">
-                  {this.state.cartItems.map((cartItem) => {
+                  {this.state.cartItems.map((cartItem, index) => {
                     let title = cartItem.title || 'NoTitle';
-                    return (<CartItem title={title} price={cartItem.price} />)
+                    return (<CartItem title={title} price={cartItem.price} key={index} delete={() => {
+                      this.removeItemFromCart(index);
+                    }}/>)
                   })}
                 </div>
               }
@@ -156,6 +172,7 @@ const CartItem = (props) => {
     <div className="cart-item">
       <p className="title">{props.title}</p>
       <p className="price">${props.price}</p>
+      <p className="remove"><DeleteIcon onClick={props.delete}/></p>
     </div>);
 }
 
@@ -169,7 +186,7 @@ const MenuItem = (props) => {
       <div className="menu-item-bottom">
         <p className="menu-item-description">{props.description}</p>
         {props.toGo && 
-          <AddShoppingCartIcon />
+          <AddShoppingCartIcon onClick={props.addItemToCart}/>
         }
         {props.userIsAdmin &&
           <React.Fragment>

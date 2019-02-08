@@ -141,6 +141,16 @@ p {
     animation-duration: 1s;
 }
 
+.cart-item .price, .cart-item .title, .cart-item .remove {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cart-item .remove {
+    margin-left: 1rem;
+}
+
 .cart-item .price {
     flex: 1;
     text-align: right;
@@ -204,6 +214,3 @@ p {
     font-size: 1rem;
 }
 
-.menu-item-add-to-cart {
-    
-}
