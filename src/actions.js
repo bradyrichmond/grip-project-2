@@ -26,6 +26,9 @@ export const POST_MENU_ITEM_ERROR = 'POST_MENU_ITEM_ERROR';
 export const POST_CATEGORY_REQUEST = 'POST_CATEGORY_REQUEST';
 export const POST_CATEGORY_SUCCESS = 'POST_CATEGORY_SUCCESS';
 export const POST_CATEGORY_ERROR = 'POST_CATEGORY_ERROR';
+export const PUT_CATEGORY_REQUEST = 'PUT_CATEGORY_REQUEST';
+export const PUT_CATEGORY_SUCCESS = 'PUT_CATEGORY_SUCCESS';
+export const PUT_CATEGORY_ERROR = 'PUT_CATEGORY_ERROR';
 
 
 // POST
@@ -285,5 +288,38 @@ export const gripFetchFailure = () => {
     return {
         type: GRIP_PROJECT,
         isFetching: false
+    }
+}
+
+// PUT
+export const putCategory = (category) => dispatch => {
+    dispatch(putCategoryRequest());
+    axios.put(`/api/category/${category._id}`, category)
+    .then(() => {
+        dispatch(putCategorySuccess());
+        dispatch(fetchCategories());
+    })
+    .catch((error) => {
+        dispatch(putCategoryError(error));
+    });
+}
+
+export const putCategoryRequest = () => {
+    return {
+        type: PUT_CATEGORY_REQUEST,
+        categoryPutError: false
+    }
+}
+
+export const putCategorySuccess = () => {
+    return {
+        type: PUT_CATEGORY_SUCCESS
+    }
+}
+
+export const putCategoryError = () => {
+    return {
+        type: PUT_CATEGORY_ERROR,
+        categoryPutError: true
     }
 }

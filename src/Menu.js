@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchMenuItems, fetchCategories, deleteMenuItem, postCategory, deleteCategory } from './actions';
+import { fetchMenuItems, fetchCategories, deleteMenuItem, postCategory, deleteCategory, putCategory } from './actions';
 import AddMenuItem from './components/AddMenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
@@ -21,7 +21,8 @@ class Menu extends Component {
       cartIsOverflowing: false,
       categoryTitle: '',
       isAddingCategory: false,
-      isAddingMenuItem: false
+      isAddingMenuItem: false,
+      isEditingCategory: false
     }
 
     this.scrollCart = React.createRef();
@@ -111,6 +112,17 @@ class Menu extends Component {
     })
   }
 
+  editCategory = (id) => {
+    let newCategory = {};
+    newCategory.text = this.state.categoryTitle;
+    newCategory._id = id;
+    this.props.dispatch(putCategory(newCategory));
+    this.setState({
+      categoryTitle: '',
+      isEditingCategory: false
+    });
+  }
+
   render() {
     return (
       <div className="menu-view-container">
@@ -125,14 +137,29 @@ class Menu extends Component {
                       <Button key={category._id}  variant="outlined" onClick={() => {
                         this.filterItems(category.text)
                         }}>
-                        {category.text}
+                        {!this.state.isEditingCategory && category.text}
+                        {this.state.isEditingCategory && 
+                          <AddOrEditCategory 
+                            title={this.state.categoryTitle} 
+                            onChange={this.handleChange('categoryTitle')} 
+                            buttonLabel="Update Category" 
+                            submit={() => {
+                              this.editCategory(category._id);
+                            }}
+                          />
+                        }
                       </Button>
                       {this.props.isAdmin &&
                           <React.Fragment className="menu-category-admin">
                             <DeleteIcon onClick={() => {
                               this.deleteCategory(category._id);
                             }}/>
-                            <Icon>edit_icon</Icon>
+                            <Icon onClick={() => {
+                              this.setState({
+                                isEditingCategory: true,
+                                categoryTitle: category.text
+                              })
+                            }}>edit_icon</Icon>
                           </React.Fragment>
                         }
                     </div>
@@ -155,7 +182,12 @@ class Menu extends Component {
                     })
                   }}
                   >
-                    <AddOrEditCategory title={this.state.categoryTitle} onChange={this.handleChange('categoryTitle')} buttonLabel="Add Category" submit={this.createCategory}/>
+                    <AddOrEditCategory 
+                      title={this.state.categoryTitle}
+                      onChange={this.handleChange('categoryTitle')}
+                      buttonLabel="Add Category" 
+                      submit={this.createCategory}
+                    />
                   </AddButton>
                 </div>
               }

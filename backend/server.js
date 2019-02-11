@@ -126,6 +126,13 @@ router.route('/categories')
     })
 
 router.route('/category/:_id')
+    .put(function (req, res) {
+        Category.findByIdAndUpdate(req.params._id, {text: req.body.text}, {new: true}, function(err) {
+            if (err)
+                res.send(err);
+            res.json({ message: 'category has been updated' })
+        });
+    })
     .delete(function (req, res) {
         //remove all menu items in this category
         Category.findById(req.params._id, function(findById_err, category) {
@@ -140,8 +147,8 @@ router.route('/category/:_id')
                 
                 var deleteList = menuItems.map((menuItem) => {
                     return menuItem._id;
-                })
-                console.log(deleteList);
+                });
+
                 MenuItem.deleteMany({_id: { $in: deleteList}}, function(deleteMany_error) {
                     if (deleteMany_error)
                         res.send(deleteMany_error);

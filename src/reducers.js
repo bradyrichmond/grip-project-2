@@ -22,7 +22,10 @@ import {
     POST_MENU_ITEM_ERROR,
     POST_CATEGORY_REQUEST,
     POST_CATEGORY_SUCCESS,
-    POST_CATEGORY_ERROR
+    POST_CATEGORY_ERROR,
+    PUT_CATEGORY_REQUEST,
+    PUT_CATEGORY_SUCCESS,
+    PUT_CATEGORY_ERROR
 } 
 from './actions';
 
@@ -63,6 +66,10 @@ const grip = (state = {menuItems: [], categories: []}, action) => {
         case POST_CATEGORY_REQUEST:
         case POST_CATEGORY_SUCCESS:
         case POST_CATEGORY_ERROR:
+            return { ...state};
+        case PUT_CATEGORY_REQUEST:
+        case PUT_CATEGORY_SUCCESS:
+        case PUT_CATEGORY_ERROR:
             return { ...state};
         default:
             return state;
