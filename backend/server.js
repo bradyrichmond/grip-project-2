@@ -7,7 +7,6 @@ var bodyParser = require('body-parser');
 var Category = require('./model/categories');
 var MenuItem = require('./model/menuItems');
 var Token = require('./model/tokens');
-var crypto = require('crypto');
 const {OAuth2Client} = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 require('dotenv').config();
@@ -35,7 +34,7 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
-    //and remove cacheing so we get the most recent tweets
+    //and remove cacheing so we get the most recent
     res.setHeader('Cache-Control', 'no-cache');
     next();
 });
@@ -125,6 +124,39 @@ router.route('/categories')
             res.json({ message: 'Category successfully added!' });
         });
     })
+
+router.route('/category/:_id')
+    .delete(function (req, res) {
+        //remove all menu items in this category
+        Category.findById(req.params._id, function(findById_err, category) {
+            if (findById_err)
+                res.send(findById_err);
+
+            var lowerCaseCategory = category.text.toLowerCase();
+
+            MenuItem.find({category: lowerCaseCategory}, function(find_error, menuItems) {
+                if (find_error)
+                    res.send(find_error);
+                
+                var deleteList = menuItems.map((menuItem) => {
+                    return menuItem._id;
+                })
+                console.log(deleteList);
+                MenuItem.deleteMany({_id: { $in: deleteList}}, function(deleteMany_error) {
+                    if (deleteMany_error)
+                        res.send(deleteMany_error);
+                    //selects the category by its ID, then removes it.
+                    Category.deleteOne({ _id: req.params._id }, function (deleteOne_error) {
+                        if (deleteOne_error)
+                            res.send(deleteOne_error);
+                        res.json({ message: 'category has been deleted' })
+                    });
+                })
+            });
+
+            
+        });
+    });
   
   //adding the /categories route to our /api router
 router.route('/menuitems')
@@ -159,8 +191,8 @@ router.route('/menuitems')
 
 router.route('/menuitem/:_id')
     .delete(function (req, res) {
-        //selects the tweet by its ID, then removes it.
-        MenuItem.remove({ _id: req.params._id }, function (err) {
+        //selects the menuitem by its ID, then removes it.
+        MenuItem.deleteOne({ _id: req.params._id }, function (err) {
             if (err)
                 res.send(err);
             res.json({ message: 'menuItem has been deleted' })

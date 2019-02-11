@@ -11,6 +11,9 @@ export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const DELETE_MENU_ITEM_REQUEST = 'DELETE_MENU_ITEM_REQUEST';
 export const DELETE_MENU_ITEM_SUCCESS = 'DELETE_MENU_ITEM_SUCCESS';
 export const DELETE_MENU_ITEM_ERROR = 'DELETE_MENU_ITEM_ERROR';
+export const DELETE_CATEGORY_REQUEST = 'DELETE_CATEGORY_REQUEST';
+export const DELETE_CATEGORY_SUCCESS = 'DELETE_CATEGORY_SUCCESS';
+export const DELETE_CATEGORY_ERROR = 'DELETE_CATEGORY_ERROR';
 export const FETCH_MENU_ITEMS_REQUEST = 'FETCH_MENU_ITEMS_REQUEST';
 export const FETCH_MENU_ITEMS_SUCCESS = 'FETCH_MENU_ITEMS_SUCCESS';
 export const FETCH_MENU_ITEMS_ERROR = 'FETCH_MENU_ITEMS_ERROR';
@@ -20,6 +23,9 @@ export const FETCH_CATEGORIES_ERROR = 'FETCH_CATEGORIES_ERROR';
 export const POST_MENU_ITEM_REQUEST = 'POST_MENU_ITEM_REQUEST';
 export const POST_MENU_ITEM_SUCCESS = 'POST_MENU_ITEM_SUCCESS';
 export const POST_MENU_ITEM_ERROR = 'POST_MENU_ITEM_ERROR';
+export const POST_CATEGORY_REQUEST = 'POST_CATEGORY_REQUEST';
+export const POST_CATEGORY_SUCCESS = 'POST_CATEGORY_SUCCESS';
+export const POST_CATEGORY_ERROR = 'POST_CATEGORY_ERROR';
 
 
 // POST
@@ -90,6 +96,37 @@ export const postMenuItemError = () => {
     }
 }
 
+export const postCategory = (category) => dispatch => {
+    dispatch(postCategoryRequest());
+    axios.post('/api/categories', category)
+    .then(() => {
+      dispatch(postCategorySuccess());
+      dispatch(fetchCategories());
+    })
+    .catch((failure) => {
+      console.error('post category error', failure);
+      dispatch(postCategoryError());
+    });
+}
+
+export const postCategoryRequest = () => {
+    return {
+        type: POST_CATEGORY_REQUEST
+    }
+}
+
+export const postCategorySuccess = () => {
+    return {
+        type: POST_CATEGORY_SUCCESS
+    }
+}
+
+export const postCategoryError = () => {
+    return {
+        type: POST_CATEGORY_ERROR
+    }
+}
+
 // DELETE
 // delete menu items
 export const deleteMenuItem = (id) => dispatch => {
@@ -118,6 +155,37 @@ export const deleteMenuItemSuccess = () => dispatch => {
 export const deleteMenuItemError = () => {
     return {
         type: DELETE_MENU_ITEM_ERROR
+    }
+}
+
+export const deleteCategory = (id) => dispatch => {
+    dispatch(deleteCategoryRequest());
+    axios.delete(`/api/category/${id}`).then(() => {
+        dispatch(deleteCategorySuccess());
+        dispatch(fetchCategories());
+        dispatch(fetchMenuItems());
+    })
+    .catch(err => {
+        dispatch(deleteCategoryError());
+    });
+}
+
+export const deleteCategoryRequest = () => {
+    return {
+        type: DELETE_CATEGORY_REQUEST
+    }
+}
+
+export const deleteCategorySuccess = () => dispatch => {
+    dispatch(fetchCategories());
+    return {
+        type: DELETE_CATEGORY_SUCCESS
+    }
+}
+
+export const deleteCategoryError = () => {
+    return {
+        type: DELETE_CATEGORY_ERROR
     }
 }
 

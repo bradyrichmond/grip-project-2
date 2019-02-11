@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchMenuItems, fetchCategories, deleteMenuItem } from './actions';
+import { fetchMenuItems, fetchCategories, deleteMenuItem, postCategory, deleteCategory } from './actions';
 import AddMenuItem from './components/AddMenuItem';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import AddIcon from '@material-ui/icons/Add';
+import ClearIcon from '@material-ui/icons/Clear';
+import TextField from '@material-ui/core/TextField';
 
 class Menu extends Component {
   constructor(props) { 
@@ -16,7 +18,10 @@ class Menu extends Component {
       filteredMenuItems: [],
       selectedFilter: 'appetizers',
       cartItems: [],
-      cartIsOverflowing: false
+      cartIsOverflowing: false,
+      categoryTitle: '',
+      isAddingCategory: false,
+      isAddingMenuItem: false
     }
 
     this.scrollCart = React.createRef();
@@ -32,7 +37,11 @@ class Menu extends Component {
       console.log(this.props.menuItems);
       this.filterItems();
     }
- }
+  }
+
+  handleChange = (name) => event => {
+    this.setState({ [name]: event.target.value });
+  };
 
   addToCart = (menuItem) => {
     let newCart = this.state.cartItems;
@@ -69,6 +78,10 @@ class Menu extends Component {
     this.props.dispatch(deleteMenuItem(id));
   }
 
+  deleteCategory = (id) => {
+    this.props.dispatch(deleteCategory(id))
+  }
+
   checkCartOverflow = () => {
     return this.scrollCart.current.scrollHeight > this.scrollCart.current.clientHeight;
   }
@@ -88,6 +101,16 @@ class Menu extends Component {
     });
   }
 
+  createCategory = () => {
+    let newCategory = {}
+    newCategory.text = this.state.categoryTitle;
+    this.props.dispatch(postCategory(newCategory));
+    this.setState({
+      categoryTitle: '',
+      isAddingCategory: false
+    })
+  }
+
   render() {
     return (
       <div className="menu-view-container">
@@ -98,17 +121,43 @@ class Menu extends Component {
               {this.props.categories.map(category => 
                 {
                   return (
-                    <Button key={category.id}  variant="outlined" onClick={() => {
-                      this.filterItems(category.text)
-                      }}>
-                      {category.text}
-                    </Button>
+                    <div className="menu-category-button">
+                      <Button key={category._id}  variant="outlined" onClick={() => {
+                        this.filterItems(category.text)
+                        }}>
+                        {category.text}
+                      </Button>
+                      {this.props.isAdmin &&
+                          <React.Fragment className="menu-category-admin">
+                            <DeleteIcon onClick={() => {
+                              this.deleteCategory(category._id);
+                            }}/>
+                            <Icon>edit_icon</Icon>
+                          </React.Fragment>
+                        }
+                    </div>
                   )
                 }
               )}
               {
                 this.props.isAdmin &&
-                <AddIcon />
+                <div className="menu-category-button">
+                  <AddButton 
+                  isAdding={this.state.isAddingCategory} 
+                  open={() => {
+                    this.setState({
+                      isAddingCategory: true
+                    });
+                  }}
+                  close={() => {
+                    this.setState({
+                      isAddingCategory: false
+                    })
+                  }}
+                  >
+                    <AddOrEditCategory title={this.state.categoryTitle} onChange={this.handleChange('categoryTitle')} buttonLabel="Add Category" submit={this.createCategory}/>
+                  </AddButton>
+                </div>
               }
             </div>
           }
@@ -135,7 +184,21 @@ class Menu extends Component {
             this.state.filteredMenuItems.length < 1 &&
             <p>No Menu Items</p>
           }
-          {this.props.isAdmin && <AddMenuItem />}
+          {this.props.isAdmin && 
+            <AddButton isAdding={this.state.isAddingMenuItem} 
+            open={() => {
+              this.setState({
+                isAddingMenuItem: true
+              });
+            }}
+            close={() => {
+              this.setState({
+                isAddingMenuItem: false
+              })
+            }}>
+              <AddMenuItem />
+            </AddButton>
+          }
 
         </div>
         <div className="cart-container">
@@ -196,6 +259,38 @@ const MenuItem = (props) => {
         }
       </div>
     </div>);
+}
+
+const AddButton = (props) => {
+  return (
+    <Button variant="outlined">
+      {!props.isAdding && <AddIcon onClick={props.open}/>}
+      {props.isAdding &&
+        <React.Fragment>
+          {props.children}
+          <ClearIcon onClick={props.close}/>
+        </React.Fragment>
+      }
+    </Button>
+  )
+}
+
+const AddOrEditCategory = (props) => {
+  return (
+    <React.Fragment>
+      <TextField
+          required
+          id="menu-category-title"
+          label="Category Name"
+          value={props.title}
+          onChange={props.onChange}
+          margin="normal"
+      />
+      <Button variant="outlined" onClick={props.submit}>
+        {props.buttonLabel}
+      </Button>
+    </React.Fragment>
+  )
 }
 
 const mapStateToProps = (state) => {

@@ -8,6 +8,9 @@ import {
     DELETE_MENU_ITEM_REQUEST,
     DELETE_MENU_ITEM_SUCCESS,
     DELETE_MENU_ITEM_ERROR,
+    DELETE_CATEGORY_REQUEST,
+    DELETE_CATEGORY_SUCCESS,
+    DELETE_CATEGORY_ERROR,
     FETCH_MENU_ITEMS_REQUEST,
     FETCH_MENU_ITEMS_SUCCESS,
     FETCH_MENU_ITEMS_ERROR,
@@ -16,7 +19,10 @@ import {
     FETCH_CATEGORIES_ERROR,
     POST_MENU_ITEM_REQUEST,
     POST_MENU_ITEM_SUCCESS,
-    POST_MENU_ITEM_ERROR
+    POST_MENU_ITEM_ERROR,
+    POST_CATEGORY_REQUEST,
+    POST_CATEGORY_SUCCESS,
+    POST_CATEGORY_ERROR
 } 
 from './actions';
 
@@ -34,6 +40,10 @@ const grip = (state = {menuItems: [], categories: []}, action) => {
         case DELETE_MENU_ITEM_SUCCESS:
         case DELETE_MENU_ITEM_ERROR:
             return { ...state};
+        case DELETE_CATEGORY_REQUEST:
+        case DELETE_CATEGORY_SUCCESS:
+        case DELETE_CATEGORY_ERROR:
+            return { ...state};
         case FETCH_MENU_ITEMS_REQUEST:
             return { ...state};
         case FETCH_MENU_ITEMS_SUCCESS:
@@ -49,6 +59,10 @@ const grip = (state = {menuItems: [], categories: []}, action) => {
         case POST_MENU_ITEM_REQUEST:
         case POST_MENU_ITEM_SUCCESS:
         case POST_MENU_ITEM_ERROR:
+            return { ...state};
+        case POST_CATEGORY_REQUEST:
+        case POST_CATEGORY_SUCCESS:
+        case POST_CATEGORY_ERROR:
             return { ...state};
         default:
             return state;
